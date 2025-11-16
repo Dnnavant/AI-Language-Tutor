@@ -1,66 +1,78 @@
+// src/screens/auth/LoginScreen.tsx
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import type { AuthStackParamList } from "../../../App";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { AuthStackParamList } from "../../../App";
 import { useAuth } from "../../context/AuthContext";
 
-export type LoginScreenProps = NativeStackScreenProps<
-  AuthStackParamList,
-  "Login"
->;
+type Props = NativeStackScreenProps<AuthStackParamList, "Login">;
 
-const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
+const LoginScreen: React.FC<Props> = ({ navigation }) => {
   const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert("Missing Info", "Enter your email and password.");
-      return;
-    }
-
-    try {
-      setLoading(true);
-      await login(email, password);
-    } catch (error) {
-      console.error(error);
-      Alert.alert("Login failed", "Please try again later.");
-    } finally {
-      setLoading(false);
-    }
+    if (!email || !password) return;
+    setLoading(true);
+    await login(email.trim(), password);
+    setLoading(false);
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
       <Text style={styles.title}>Welcome back</Text>
+      <Text style={styles.subtitle}>Continue your language journey.</Text>
+
+      <Text style={styles.label}>Email</Text>
       <TextInput
         style={styles.input}
-        placeholder="Email"
-        autoCapitalize="none"
-        keyboardType="email-address"
+        placeholder="you@example.com"
+        placeholderTextColor="#6b7280"
         value={email}
         onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
       />
+
+      <Text style={styles.label}>Password</Text>
       <TextInput
         style={styles.input}
-        placeholder="Password"
-        secureTextEntry
+        placeholder="••••••••"
+        placeholderTextColor="#6b7280"
         value={password}
         onChangeText={setPassword}
+        secureTextEntry
       />
-      <Button
-        title={loading ? "Logging in..." : "Log In"}
+
+      <TouchableOpacity
+        style={styles.primaryButton}
         onPress={handleLogin}
-      />
-      <Text style={styles.secondaryAction}>
-        Need an account?{" "}
-        <Text style={styles.link} onPress={() => navigation.navigate("Signup")}>
-          Sign up
+        disabled={loading}
+      >
+        <Text style={styles.primaryText}>
+          {loading ? "Logging in…" : "Log in"}
         </Text>
-      </Text>
-    </View>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
+        <Text style={styles.linkText}>
+          New here? <Text style={styles.linkInner}>Create an account</Text>
+        </Text>
+      </TouchableOpacity>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -69,25 +81,50 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 24,
     justifyContent: "center",
+    backgroundColor: "#050816",
   },
   title: {
-    fontSize: 24,
-    fontWeight: "600",
-    marginBottom: 16,
+    fontSize: 26,
+    fontWeight: "700",
+    color: "#fff",
+    marginBottom: 6,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: "#9ca3af",
+    marginBottom: 24,
+  },
+  label: {
+    color: "#e5e7eb",
+    marginBottom: 4,
+    marginTop: 12,
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 12,
+    borderColor: "#374151",
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    color: "#fff",
   },
-  secondaryAction: {
-    marginTop: 16,
+  primaryButton: {
+    marginTop: 24,
+    backgroundColor: "#2563eb",
+    paddingVertical: 14,
+    borderRadius: 999,
   },
-  link: {
-    color: "#7f5af0",
+  primaryText: {
+    color: "#fff",
+    textAlign: "center",
     fontWeight: "600",
+  },
+  linkText: {
+    marginTop: 16,
+    textAlign: "center",
+    color: "#9ca3af",
+  },
+  linkInner: {
+    color: "#60a5fa",
   },
 });
 
