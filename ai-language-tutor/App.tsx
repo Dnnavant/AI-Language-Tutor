@@ -1,8 +1,13 @@
 // App.tsx
+import "react-native-gesture-handler";
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { StatusBar } from "expo-status-bar";
+import { enableScreens } from "react-native-screens";
 import { AuthProvider, useAuth } from "./src/context/AuthContext";
 
 import WelcomeScreen from "./src/screens/auth/WelcomeScreen";
@@ -31,6 +36,8 @@ export type AppTabParamList = {
   Progress: undefined;
   Settings: undefined;
 };
+
+enableScreens();
 
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
 const Tab = createBottomTabNavigator<AppTabParamList>();
@@ -84,8 +91,13 @@ const RootNavigator = () => {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <RootNavigator />
-    </AuthProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <AuthProvider>
+          <RootNavigator />
+          <StatusBar style="dark" />
+        </AuthProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
