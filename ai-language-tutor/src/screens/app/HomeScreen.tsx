@@ -30,7 +30,7 @@ const HomeScreen: React.FC = () => {
       )}
 
       {user?.isPremium && (
-        <View className="premium">
+        <View style={styles.premiumWrapper}>
           <View style={styles.premiumBadge}>
             <Text style={styles.premiumText}>Premium active</Text>
             {isDeveloper && <Text style={styles.devText}>Developer mode</Text>}
@@ -68,11 +68,11 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   trialText: { color: "#111827", fontWeight: "600", textAlign: "center" },
+  premiumWrapper: { marginBottom: 24 },
   premiumBadge: {
     backgroundColor: "#22c55e",
     padding: 10,
     borderRadius: 12,
-    marginBottom: 24,
     alignItems: "center",
   },
   premiumText: { color: "#022c22", fontWeight: "700" },
